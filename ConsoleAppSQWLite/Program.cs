@@ -15,9 +15,9 @@ namespace ConsoleAppSQWLite
             // Create options that you want your menu to have
             options = new List<Option>
             {
-                new Option("Open data", (conf) => WriteTemporaryMessage("Hi",NewMethod)),
-                new Option("Another thing", (conf) =>  WriteTemporaryMessage("How Are You",null)),
-                new Option("Yet Another Thing", (conf) =>  WriteTemporaryMessage("Today",null)),
+                new Option("Open data", (conf) => WriteTemporaryMessage("Hi ",NewMethod)),
+                new Option("Another thing", (conf) =>  WriteTemporaryMessage("Update ",UpdateMethod)),
+                new Option("Yet Another Thing", (conf) =>  WriteTemporaryMessage("Today ",null)),
                 new Option("Exit", (conf) => Environment.Exit(0)),
             };
             
@@ -134,6 +134,30 @@ namespace ConsoleAppSQWLite
                 {
                     Console.WriteLine($"{u.Id}.{u.Name} - {u.Age}");
                 }
+            }
+        }
+
+
+        private static void UpdateMethod(DbContextOptions<ApplicationContext> ops)
+        {
+            if (ops == null) return;
+
+            using (ApplicationContext db = new ApplicationContext(ops))
+            {
+                bool isCreated = db.Database.EnsureCreated();
+                // bool isCreated2 = await db.Database.EnsureCreatedAsync();
+                if (isCreated) Console.WriteLine("База данных была создана");
+                else Console.WriteLine("База данных уже существует");
+                // получаем объекты из бд и выводим на консоль
+
+                User? user = db.Users.FirstOrDefault();
+                if (user != null)
+                {
+                    user.Name = "Bob";
+                    user.Age = 35;
+                    db.SaveChanges();
+                }
+               
             }
         }
     }
